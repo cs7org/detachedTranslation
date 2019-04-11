@@ -19,9 +19,9 @@
 #ifndef AVGTranslator_H_
 #define AVGTranslator_H_
 
-#include "Translator.h"
 #include <math.h>
 #include <map>
+#include "../Translator.h"
 
 class AVGTranslator : public Translator {
 

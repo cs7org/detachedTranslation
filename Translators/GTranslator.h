@@ -19,9 +19,9 @@
 #ifndef GTranslator_H_
 #define GTranslator_H_
 
-#include "Translator.h"
 #include <math.h>
 #include <string>
+#include "../Translator.h"
 
 #define SPEEDNORM 10.0
 #define STD 1
@@ -69,7 +69,7 @@ public:
 		//todo: NUMLANES for every road segment
 		double r3 =  rand() % NUMLANES;
 		int l = r3 * (speed/SPEEDNORM);
-		if(l >= NUMLANES) lane = NUMLANES-1;
+		if(l >= NUMLANES) l = NUMLANES-1;
 		lane = to_string(l);
 
 		//create micro tuple

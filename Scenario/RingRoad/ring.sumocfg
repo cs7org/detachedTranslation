@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.sf.net/xsd/sumoConfiguration.xsd">
+    <input>
+        <net-file value="network.sumo.xml"/>
+        <route-files value="rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <step-length value="1"/>
+    </time>
+    <report>
+        <no-step-log value="true"/>
+    </report>
+     <routing>
+        <eager-insert value="true"/>
+        <max-depart-delay value="0"/>
+    </routing>
+	<processing>
+		<time-to-teleport value="-1"/>
+	</processing>
+    <gui_only>
+        <start value="true"/>
+    </gui_only>
+   <random_number>
+        <seed value="23423" synonymes="srand" type="INT" help="Initialises the random number generator with the given value"/>
+    </random_number>
+</configuration>

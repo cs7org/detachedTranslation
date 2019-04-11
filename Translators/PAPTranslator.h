@@ -19,9 +19,9 @@
 #ifndef PAPTranslator_H_
 #define PAPTranslator_H_
 
-#include "Translator.h"
 #include <math.h>
 #include <map>
+#include "../Translator.h"
 
 #define FIXEDROUTE "f g h a"
 
@@ -38,7 +38,8 @@ public:
 	std::map<std::string, double> arrivalRates;
 	std::map<double, std::string> arrivals;
 	std::map<std::string, double> arrivalsByRoad;
-	//todo: std::map<std::string, double> interarrivalsByRoad;
+	std::map<std::string, double> scheduleTimesByRoad;
+
 	PAPTranslator(DataLayer* i, DataLayer*o) : Translator(i,o){};
 	~PAPTranslator(){};
 
@@ -49,7 +50,7 @@ public:
 
 		arrivals[nextArrivalTime] = arrivalRoad;
 		arrivalsByRoad[arrivalRoad] = nextArrivalTime;
-		//todo:	interarrivalsByRoad[arrivalRoad] = nextArrivalTime - time;
+		scheduleTimesByRoad[arrivalRoad] = t;
 	};
 
 	double calcInterArrival(string arrivalRoad){
@@ -80,17 +81,18 @@ public:
 		}
 		//if so, interpolate between old an new arrival and delete old
 		else{
-			double leftFromOld = arrivalsByRoad[roadID]-t;
-			double leftForNew = calcInterArrival(roadID);
+			double Ts = scheduleTimesByRoad[roadID];
+			double newIA = calcInterArrival(roadID);
+			double oldIA = arrivalsByRoad[roadID]-Ts;
+			double R = (t-Ts)/(t-Ts+newIA);
+			double intIA = R * oldIA + (1-R) * newIA;
 
 			//todo: problem for multiple roads, if arrival is scheduled for exactly same time
 			arrivals.erase(arrivalsByRoad[roadID]);
 
-			double span = leftForNew-leftFromOld;
-			if (span < 0) span *=-1;
-
-			arrivalsByRoad[roadID]=t+span/2;
-			arrivals[t+span/2] = roadID;
+			arrivalsByRoad[roadID]=Ts+intIA;
+			scheduleTimesByRoad[roadID]=Ts;
+			arrivals[Ts+intIA] = roadID;
 		}
 	};
 

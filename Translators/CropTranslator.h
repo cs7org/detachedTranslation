@@ -19,7 +19,7 @@
 #ifndef CropTranslator_H_
 #define CropTranslator_H_
 
-#include "Translator.h"
+#include "../Translator.h"
 
 class CropTranslator : public Translator {
 
@@ -36,11 +36,11 @@ public:
 
 		std::vector<Parameter *> meso;
 
-		for(Parameter* param : v){
+		for(Parameter* param : micro){
 			if(param->getID() == "vehID"){
-				out.push_back(param);
+				meso.push_back(param);
 			} else if (param->getID() == "route"){
-				out.push_back(param);
+				meso.push_back(param);
 			}
 		}
 
