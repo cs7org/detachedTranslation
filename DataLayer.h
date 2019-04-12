@@ -16,52 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TRANSLATOR_H_
-#define TRANSLATOR_H_
+#ifndef DATALAYER_H_
+#define DATALAYER_H_
 
-#include <iostream>
+#include <string>
 #include <vector>
-#include <unistd.h>
-#include <iostream>
-
-#include "DataLayer.h"
 #include "Parameter.h"
-#include "TranslationUnit.h"
-
-class TranslationUnit;
 
 /*******************************************************************************
- * Base class for implementing concrete translators. Translator receives() and
- * processes incoming data. Depending on purpose, data may be directly forwarded
- * via send(). Another option is to use loop() and continuously calculate if
- * something should be send().
+ * Generic data layer representation
  ******************************************************************************/
 
-class Translator {
-protected:
-	int TIMESTEP = 1000; //in ms
-	volatile bool running = true;
-	DataLayer* inputLayer;
-	DataLayer* outputLayer;
-	TranslationUnit* tu;
+class DataLayer {
+private:
+	std::string domain;
+	std::string id;
+	std::vector<Parameter*> interface;
 
 public:
-	void registerTU(TranslationUnit* t);
-	double getCurrentTime();
-	double getTimeStep(){return TIMESTEP;}
+	DataLayer(std::string d, std::string i){
+		domain=d;
+		id=i;
+	};
 
-	Translator(DataLayer* il, DataLayer* ol);
-	~Translator(){};
-
-	inline DataLayer* getInputLayer(){ return inputLayer;};
-	inline DataLayer* getOutputLayer(){ return outputLayer;};
-
-	void start(){
-		while(running)loop();
+	void pushParameterType(Parameter* p){
+		interface.push_back(p);
+	}
+	std::string getDomain(){
+		return domain;
 	}
 
-	virtual void receive(std::vector<Parameter *> v){};
-	virtual void send(std::vector<Parameter *> v){};
-	virtual void loop(){};
+	std::string getID(){
+		return id;
+	}
 };
-#endif
+
+#endif /*DATALAYER_H_*/

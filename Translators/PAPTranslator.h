@@ -65,9 +65,9 @@ public:
 		double volume;
 
 		for(Parameter* param : macro){
-			if(param->id == "roadID"){
+			if(param->getID() == "roadID"){
 				roadID = ((IParameter<std::string>*)param)->getValue();
-			} else if(param->id == "volume"){
+			} else if(param->getID() == "volume"){
 				volume = ((IParameter<double>*)param)->getValue();
 			}
 			free(param);

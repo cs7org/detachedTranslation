@@ -16,52 +16,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TRANSLATOR_H_
-#define TRANSLATOR_H_
+#ifndef TRANSLATIONUNIT_H_
+#define TRANSLATIONUNIT_H_
 
-#include <iostream>
-#include <vector>
-#include <unistd.h>
-#include <iostream>
+#include <string>
+#include <stdlib.h>
+#include <time.h>
+#include <thread>
+#include <chrono>
 
 #include "DataLayer.h"
 #include "Parameter.h"
-#include "TranslationUnit.h"
+#include "Translator.h"
+#include "TranslatorFederate.h"
 
-class TranslationUnit;
+class TranslatorFederate;
+class Translator;
 
 /*******************************************************************************
- * Base class for implementing concrete translators. Translator receives() and
- * processes incoming data. Depending on purpose, data may be directly forwarded
- * via send(). Another option is to use loop() and continuously calculate if
- * something should be send().
+ * TranslationUnit class holds pointers to the (dis)aggregation translators.
+ * It delegates data coming from HLA federate component to the translators
+ * and vice versa. Offers timing interface between translators and federates.
  ******************************************************************************/
 
-class Translator {
-protected:
-	int TIMESTEP = 1000; //in ms
-	volatile bool running = true;
-	DataLayer* inputLayer;
-	DataLayer* outputLayer;
-	TranslationUnit* tu;
+class TranslationUnit {
+private:
+	//model
+	Translator* ta;
+	Translator* td;
+	DataLayer* aggregationLayer;
+	DataLayer* disaggregationLayer;
+
+	//connection
+	std::string federationName;
+	std::string federateName;
+	TranslatorFederate* federate = 0;
 
 public:
-	void registerTU(TranslationUnit* t);
-	double getCurrentTime();
-	double getTimeStep(){return TIMESTEP;}
 
-	Translator(DataLayer* il, DataLayer* ol);
-	~Translator(){};
+	TranslationUnit(Translator* a, Translator* d);
+	~TranslationUnit();
 
-	inline DataLayer* getInputLayer(){ return inputLayer;};
-	inline DataLayer* getOutputLayer(){ return outputLayer;};
+	//prepare
+	void init(std::string federationName, std::string federateName);
+	void addRespLink(std::vector<std::string> links);
 
-	void start(){
-		while(running)loop();
-	}
+	//run
+	void timeAdvance(double t);
+	int getTime();
+	void send(DataLayer* layer, std::vector<Parameter*>);
+	void receive(DataLayer* layer, std::vector<Parameter*>);
 
-	virtual void receive(std::vector<Parameter *> v){};
-	virtual void send(std::vector<Parameter *> v){};
-	virtual void loop(){};
+	//utils
+	void printParameterSet(std::vector<Parameter*> data);
 };
 #endif
