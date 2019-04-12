@@ -41,9 +41,9 @@ public:
 		std::string road ="";
 
 		for(Parameter* param : data){
-			if(param->id == "vehID"){
+			if(param->getID() == "vehID"){
 				vehID = ((IParameter<std::string>*)param)->getValue();
-			} else if(param->id == "route"){
+			} else if(param->getID() == "route"){
 				route = ((IParameter<std::string>*)param)->getValue();
 			}
 			free(param);

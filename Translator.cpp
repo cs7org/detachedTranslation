@@ -17,19 +17,14 @@
  ******************************************************************************/
 
 #include "Translator.h"
-#include "TranslationUnit.h"
-
-#include <iostream>
 
 Translator::Translator(DataLayer* il, DataLayer* ol){
 	if(il->getDomain() != ol->getDomain()){
 		std::cerr << "Domains do not match" << std::endl;
+		return;
 	}
 	inputLayer=il;
 	outputLayer=ol;
-};
-
-Translator::~Translator(){
 };
 
 void Translator::registerTU(TranslationUnit* t){

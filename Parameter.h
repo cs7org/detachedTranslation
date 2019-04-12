@@ -16,52 +16,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#ifndef TRANSLATOR_H_
-#define TRANSLATOR_H_
+#ifndef PARAMETER_H_
+#define PARAMETER_H_
 
-#include <iostream>
-#include <vector>
-#include <unistd.h>
-#include <iostream>
-
-#include "DataLayer.h"
-#include "Parameter.h"
-#include "TranslationUnit.h"
-
-class TranslationUnit;
+#include <string>
+#include <typeinfo>
 
 /*******************************************************************************
- * Base class for implementing concrete translators. Translator receives() and
- * processes incoming data. Depending on purpose, data may be directly forwarded
- * via send(). Another option is to use loop() and continuously calculate if
- * something should be send().
+ * Parameter container
  ******************************************************************************/
 
-class Translator {
+class Parameter {
 protected:
-	int TIMESTEP = 1000; //in ms
-	volatile bool running = true;
-	DataLayer* inputLayer;
-	DataLayer* outputLayer;
-	TranslationUnit* tu;
+	std::string id;
+	std::string type;
 
 public:
-	void registerTU(TranslationUnit* t);
-	double getCurrentTime();
-	double getTimeStep(){return TIMESTEP;}
-
-	Translator(DataLayer* il, DataLayer* ol);
-	~Translator(){};
-
-	inline DataLayer* getInputLayer(){ return inputLayer;};
-	inline DataLayer* getOutputLayer(){ return outputLayer;};
-
-	void start(){
-		while(running)loop();
-	}
-
-	virtual void receive(std::vector<Parameter *> v){};
-	virtual void send(std::vector<Parameter *> v){};
-	virtual void loop(){};
+	std::string getID(){return id;}
+	std::string getType(){return type;}
 };
+
+template <class T>
+class IParameter : public Parameter{
+	T value;
+
+public:
+	IParameter(std::string i,T v){
+		value = v;
+		id = i;
+		type = typeid(T).name();
+	};
+
+	T getValue(){
+		return value;
+	};
+};
+
 #endif

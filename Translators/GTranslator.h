@@ -47,9 +47,9 @@ public:
 
 		//extract parameters
 		for(Parameter* param : meso){
-			if(param->id == "vehID"){
+			if(param->getID() == "vehID"){
 				vehID = ((IParameter<std::string>*)param)->getValue();
-			} else if(param->id == "route"){
+			} else if(param->getID() == "route"){
 				route = ((IParameter<std::string>*)param)->getValue();
 			}
 			free(param);
